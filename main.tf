@@ -1,23 +1,11 @@
-variable "awsprops" {
-    type = map
-    default = {
-    region = "ap-south-1"
-    vpc = "vpc-04de07d7d900e861b"
-    ami = "ami-0f8ca728008ff5af4"
-    itype = "t2.micro"
-    subnet = "subnet-03f860555a8ea4854"
-    publicip = true
-    keyname = "CIaCTS_key"
-    secgroupname = "IaC-Sec-Group"
-    my-access-key = ""
-    my-secret-key = ""
-  }
+locals {
+  vpc_id              = "vpc-04de07d7d900e861b"
+  subnet_id           = "subnet-03f860555a8ea4854"
+  keyname             = "CIaCTS_key"
 }
 
 provider "aws" {
-  region = lookup(var.awsprops, "region")
-  access_key = lookup(var.awsprops, "my-access-key")
-  secret_key = lookup(var.awsprops, "my-secret-key")
+  region = var.region
 }
 
 resource "aws_security_group" "ciacs-sg" {
