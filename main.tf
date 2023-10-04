@@ -8,10 +8,10 @@ provider "aws" {
   region = var.region
 }
 
-resource "aws_security_group" "ciacs-sg" {
-  name = lookup(var.awsprops, "secgroupname")
-  description = lookup(var.awsprops, "secgroupname")
-  vpc_id = lookup(var.awsprops, "vpc")
+resource "aws_security_group" "contract-sg" {
+  name = var.secgrp_name
+  description = var.secgrp_name
+  vpc_id = local.vpc_id
 
   // To Allow SSH Transport
   ingress {
@@ -42,31 +42,22 @@ resource "aws_security_group" "ciacs-sg" {
 }
 
 
-resource "aws_instance" "ciacs" {
-  ami = lookup(var.awsprops, "ami")
-  instance_type = lookup(var.awsprops, "itype")
-  subnet_id = lookup(var.awsprops, "subnet") #FFXsubnet2
-  associate_public_ip_address = lookup(var.awsprops, "publicip")
-  key_name = lookup(var.awsprops, "keyname")
+resource "aws_instance" "hybrid" {
+  ami = var.ami_id
+  instance_type = var.instance_type
+  subnet_id = local.subnet_id 
+  associate_public_ip_address = true
+  key_name = local.keyname
 
   user_data = "${file("init-script.sh")}"
     
   vpc_security_group_ids = [
-    aws_security_group.ciacs-sg.id
+    aws_security_group.hybrid-sg.id
   ]
 
   tags = {
-    Name ="IaCAppServer"
+    Name = var.instance_name
   }
 
-  depends_on = [ aws_security_group.ciacs-sg ]
-}
-
-
-output "ec2instance" {
-  value = aws_instance.ciacs.public_ip
-}
-
-output "websiterul" {
-  value = format("%s%s", aws_instance.ciacs.public_ip, "/cafe")
+  depends_on = [ aws_security_group.hybrid-sg ]
 }
