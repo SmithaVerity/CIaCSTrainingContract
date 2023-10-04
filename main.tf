@@ -42,7 +42,7 @@ resource "aws_security_group" "contract-sg" {
 }
 
 
-resource "aws_instance" "hybrid" {
+resource "aws_instance" "contract" {
   ami = var.ami_id
   instance_type = var.instance_type
   subnet_id = local.subnet_id 
@@ -52,13 +52,13 @@ resource "aws_instance" "hybrid" {
   user_data = "${file("init-script.sh")}"
     
   vpc_security_group_ids = [
-    aws_security_group.hybrid-sg.id
+    aws_security_group.contract-sg.id
   ]
 
   tags = {
     Name = var.instance_name
   }
 
-  depends_on = [ aws_security_group.hybrid-sg ]
+  depends_on = [ aws_security_group.contract-sg ]
 }
 
