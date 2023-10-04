@@ -10,8 +10,13 @@ variable "ami_id" {
 }
 
 variable "instance_type" {
+  type        = string
   description = "Type of EC2 instance to provision"
-  default = "t2.micro"
+
+  validation {
+    condition     = contains(["t2.micro", "t2.small", "t2.medium", "t3.micro"], var.instance_type)
+      error_message = "Specified Instance Type is not allowed."
+  }
 }
 
 variable "instance_name" {
@@ -22,15 +27,6 @@ variable "instance_name" {
 variable "secgrp_name" {
   description = "EC2 Secutity Group name"
   default = "Hybrid Test SG"
-}
-
-variable "password" {
-  type        = string
-  description = "password"
-  validation {
-    condition     = length(var.password) >=6 && length(var.password) <= 10
-      error_message = "The password variable name must be 6-10 characters in length."
-  }
 }
 
 variable "ip_address" {
