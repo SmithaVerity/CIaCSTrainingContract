@@ -61,3 +61,10 @@ resource "aws_instance" "hybrid" {
 
   depends_on = [ aws_security_group.hybrid-sg ]
 }
+
+
+# resource block for eip #
+resource "aws_eip" "contract-eip" {
+  instance = aws_instance.hybrid.id
+  vpc = true
+}
